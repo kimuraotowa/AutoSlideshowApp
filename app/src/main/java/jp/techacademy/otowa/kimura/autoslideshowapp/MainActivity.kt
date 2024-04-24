@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             null,
             null
         )
-
+//カーソルを閉じる
         cursor?.use {
             while (cursor.moveToNext()) {
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
