@@ -40,33 +40,42 @@ class MainActivity : AppCompatActivity() {
     if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) !=
         PackageManager.PERMISSION_GRANTED
     ) {
-
         //PERMISSION_REQUEST_CODE　→　パーミッションリクエストコード
         requestPermissions(
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
             PERMISSION_REQUEST_CODE
         )
-
         //許可されている　→　getContentsInfo()呼び出し画像情報を取得
     } else {
         getContentsInfo()
     }
 
     // クリックリスナーの設定
-    binding.btnNext.setOnClickListener { showNextImage() }
-    binding.btnReturn.setOnClickListener { showReturnImage() }
+    binding.btnNext.setOnClickListener {
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED && imageUriList.size != 0) {
+            showNextImage()
+        }
+    }
+    binding.btnReturn.setOnClickListener {
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED && imageUriList.size != 0) {
+            showReturnImage()
+        }
+    }
     binding.btnPlayPause.setOnClickListener {
-        if (isPlaying) {
-            stopSlideshow()
-        } else {
-            startSlideshow()
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED && imageUriList.size != 0) {
+            if (isPlaying) {
+                stopSlideshow()
+            } else {
+                startSlideshow()
+            }
         }
     }
 }
-
-//画像の取得
+    //画像の取得
     private fun getContentsInfo() {
-        val resolver = contentResolver
         val cursor = contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             null,
@@ -94,6 +103,7 @@ class MainActivity : AppCompatActivity() {
             displayCurrentImage()
         }
     }
+
 //現在の画像を表示
     private fun displayCurrentImage() {
         binding.imageView.setImageURI(imageUriList[currentIndex])
